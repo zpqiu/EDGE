@@ -5,7 +5,7 @@ import torch
 from fairseq.data import Dictionary
 from fairseq.tasks import FairseqTask, register_task
 
-from dg_dataset import DGDataset
+from .dg_dataset import DGDataset
 
 
 @register_task("dg_task")
@@ -36,6 +36,7 @@ class DGTask(FairseqTask):
 
     def __init__(self, args, input_vocab):
         super().__init__(args)
+        self.args = args
         self.input_vocab = input_vocab
 
     def load_dataset(self, split, combine=False, **kwargs):
