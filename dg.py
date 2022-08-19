@@ -335,7 +335,7 @@ class DGEncoder(FairseqEncoder):
         else:
             x_sorted, x_len_sorted = x, lengths
 
-        x_packed = nn.utils.rnn.pack_padded_sequence(x_sorted, x_len_sorted, batch_first=True)
+        x_packed = nn.utils.rnn.pack_padded_sequence(x_sorted, x_len_sorted.cpu(), batch_first=True)
 
         # apply LSTM
         if self.bidirectional:
