@@ -30,7 +30,7 @@ class Attention(nn.Module):
                  / math.sqrt(query.size(-1))
 
         if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
+            scores = scores.masked_fill(mask == 0, -65500)
 
         p_attn = F.softmax(scores, dim=-1)
 
@@ -39,7 +39,7 @@ class Attention(nn.Module):
             assert p_attn.size(-1) == highlights.size(-1)
             p_attn = p_attn * highlights
             if mask is not None:
-                p_attn = p_attn.masked_fill(mask == 0, 1e-7)
+                p_attn = p_attn.masked_fill(mask == 0, 7e-5)
             p_sum = p_attn.sum(dim=-1, keepdim=True)
             p_attn = p_attn / p_sum
 
@@ -458,7 +458,7 @@ class DGEncoder(FairseqEncoder):
         scores = scores.squeeze()
 
         if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
+            scores = scores.masked_fill(mask == 0, -65500)
 
         attn = F.softmax(scores, dim=-1)
         attn = attn.unsqueeze(2)
@@ -502,7 +502,8 @@ class AttentionLayer(nn.Module):
         if encoder_padding_mask is not None:
             attn_scores = attn_scores.float().masked_fill_(
                 encoder_padding_mask,
-                float('-inf')
+                7e-5
+                # float('-inf')
             ).type_as(attn_scores)  # FP16 support: cast to float and back
 
         attn_scores = F.softmax(attn_scores, dim=0)  # srclen x bsz
@@ -599,7 +600,7 @@ class DGDecoder(FairseqIncrementalDecoder):
         scores = scores.squeeze()
 
         if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
+            scores = scores.masked_fill(mask == 0, -65500)
 
         attn = F.softmax(scores, dim=-1)
         attn = attn.unsqueeze(2)
